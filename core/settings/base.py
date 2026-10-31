@@ -180,3 +180,25 @@ CKEDITOR_5_CONFIGS = {
         'toolbar': ['bold', 'italic', 'link'],
     },
 }
+
+CELERY_BROKER_URL = 'redis://localhost:6380/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6380/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Bishkek'
+
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    'clean-inactive-users-every-10-minutes': {
+        'task': 'apps.testapp.tasks.clean_inactive_users_task',
+        'schedule': 600.0,
+        'args': (30,),
+    },
+
+    'daily-admin-report': {
+        'task': 'apps.testapp.tasks.send_daily_admin_report_task',
+        'schedule': crontab(hour=9, minute=0),
+    },
+}
